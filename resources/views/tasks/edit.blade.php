@@ -13,20 +13,39 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        <form action="{{ route('tasks.update',$task->id) }}" method="post">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Creado por</th>
+                                    <th scope="col">Fecha maxima de solucion</th>
+                                    <th scope="col">Descripcion</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>{{$task->created_by}}</td>
+                                    <td>{{$task->date_max}}</td>
+                                    <td>{{$task->description}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        <form action="{{ route('logs.store') }}" method="post">
                             @csrf
-                            @method('put')
                             <div class="mb-3">
-                                <label for="description" class="form-label">Descripción de la tarea</label>
-                                <textarea class="form-control" id="description" rows="3" name="description">{{$task->description}}</textarea>
+                                <label for="description" class="form-label">Descripción de la actividad</label>
+                                <textarea class="form-control" id="description" rows="3" name="description"></textarea>
                                 @include('alerts.errors', ['field' => 'description'])
                             </div>
                             <div class="mb-3">
-                                <label for="date_max">Fecha máxima para solucionar</label>
-                                <input type="date" name="date_max" id="date_max" class="form-control" value="{{$task->date_max}}">
-                                @include('alerts.errors', ['field' => 'date_max'])
+                                <select class="form-control" aria-label="Default select example" name="action">
+                                    <option value="-">Seleccione una accion</option>
+                                    <option value="assing_task">Procesar tarea</option>
+                                    <option value="close_task">Cerrar tarea</option>
+                                </select>
+                                @include('alerts.errors', ['field' => 'action'])
                             </div>
                             <div class="mb-3">
+                                <input type="hidden" name="tasks_id" value="{{$task->id}}" />
                                 <button class="btn btn-success float-right" type="submit">Grabar</button>
                             </div>
                         </form>
