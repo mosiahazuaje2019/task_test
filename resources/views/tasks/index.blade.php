@@ -1,3 +1,7 @@
+@if (Session::has('message'))
+    <div class="alert alert-danger">{{ Session::get('message') }}</div>
+@endif
+
 <div class="table">
     <table class="table">
         <thead>
@@ -19,7 +23,13 @@
                 <td>{{$task->date_max}}</td>
                 <td>{{$task->users ? $task->users->name : null}}</td>
                 <td>
-                    <a href="/tasks/{{$task->id}}/edit" class="btn btn-success">Take</a>
+                    @if($task->status === 'Open')
+                        <a href="/tasks/{{$task->id}}/edit" class="btn btn-success">Take</a>
+                    @elseif($task->status === 'Process')
+                        <a href="/addlogs/{{$task->id}}" class="btn btn-success">Agregar logs</a>
+                    @else
+                        <a href="" class="btn btn-success">Cerrado</a>
+                    @endif
                 </td>
             </tr>
         @endforeach

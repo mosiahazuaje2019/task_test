@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Take Tasks') }} <a href="/home" class="btn btn-warning float-right">Volver</a></div>
+                    <div class="card-header">{{ __('Agregando logs') }} <a href="/home" class="btn btn-warning float-right">Volver</a></div>
 
                     <div class="card-body">
                         @if (session('status'))
@@ -13,22 +13,22 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Creado por</th>
-                                    <th scope="col">Fecha maxima de solucion</th>
-                                    <th scope="col">Descripcion</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>{{$task->user_created->name}}</td>
-                                    <td>{{$task->date_max}}</td>
-                                    <td>{{$task->description}}</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Creado por</th>
+                                <th scope="col">Fecha maxima de solucion</th>
+                                <th scope="col">Descripcion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{$task->user_created->name}}</td>
+                                <td>{{$task->date_max}}</td>
+                                <td>{{$task->description}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                         <form action="{{ route('logs.store') }}" method="post">
                             @csrf
                             <div class="mb-3">
@@ -49,6 +49,29 @@
                                 <button class="btn btn-success float-right" type="submit">Grabar</button>
                             </div>
                         </form>
+
+                        <div class="table-responsive">
+                            <h3>Logs</h3>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Acción</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Fecha</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($logs as $log)
+                                    <tr>
+                                        <td>{{$log->action}}</td>
+                                        <td>{{$log->description}}</td>
+                                        <td>{{$log->created_at}}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </div>

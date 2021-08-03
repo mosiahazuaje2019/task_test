@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Mail\MailNotifyUser;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +27,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('tasks', 'TaskController');
     Route::resource('logs', 'LogController');
+    Route::get('/send-mail', function () {
+        Mail::to('mosiahazuaje2010@gmail.com')->send(new MailNotifyUser());
+        return 'A message has been sent to Mailtrap!';
+    });
+    Route::get('addlogs/{id}', 'LogController@addLogs');
 });

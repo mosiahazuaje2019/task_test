@@ -3,83 +3,57 @@
 namespace App\Http\Controllers;
 
 use App\Log;
+use App\Mail\MailNotifyUser;
+use App\Task;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class LogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        $request->merge([
+            'user_id' => Auth::id()]);
+        Log::query()->create($request->all());
+
+        $action = $request->action;
+        if($action === 'assing_task'){
+            $status = 'Process';
+        }else {
+            $status = 'Close';
+        }
+
+        DB::table('tasks')
+            ->where('id', $request->task_id)
+            ->update(['user_id' => Auth::id(), 'status' => $status]);
+
+        return redirect()->route('home');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Log  $log
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Log $log)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Log  $log
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Log $log)
-    {
-        //
-    }
+    public function addLogs($id) {
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Log  $log
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Log $log)
-    {
-        //
-    }
+        $task = Task::where('id', $id)->with('users')->first();
+        $logs = Log::where('task_id', $id)->orderBy('id','desc')->get();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Log  $log
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Log $log)
-    {
-        //
+        if(Auth::id() !== $task->user_id){
+            Session::flash('message', "Ya tiene un usuario asignado");
+            return Redirect::back();
+        }
+        return view('logs.addlogs', compact('task', 'logs'));
+
     }
 }
