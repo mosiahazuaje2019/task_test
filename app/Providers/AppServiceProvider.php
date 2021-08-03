@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Log;
 use App\Observers\LogObserver;
+use App\Observers\ProductObserver;
+use App\Product;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Log::observe(LogObserver::class);
+        Product::observe(ProductObserver::class);
     }
 }
